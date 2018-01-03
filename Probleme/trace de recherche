@@ -7,11 +7,10 @@ label = Label(top, text="Taille de la grille")
 label.pack()
 
 
-bouton=Button(top, text="Fermer", command=top.destroy)
+bouton=Button(top, text="Jouer", command=top.destroy)
 bouton.pack()
 top.mainloop()
 grille=int(value.get())
 
 
   CEST BON LA PUTAIN DE LA RACE DE SA MERE LA PUTE DE PYTHON
-  PLUS QUE A FAIRE MARCHER LE top.quit
