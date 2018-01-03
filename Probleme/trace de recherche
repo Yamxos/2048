@@ -12,5 +12,4 @@ bouton.pack()
 top.mainloop()
 grille=int(value.get())
 
-
-  CEST BON LA PUTAIN DE LA RACE DE SA MERE LA PUTE DE PYTHON
+Créer une fenêtre avant même l'initialisation du jeu, c'est malin, gg bro.
