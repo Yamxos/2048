@@ -13,3 +13,4 @@ top.mainloop()
 grille=int(value.get())
 
 Créer une fenêtre avant même l'initialisation du jeu, c'est malin, gg bro.
+Plus qu'à rendre ça un peu plus propre et au moins mettre le 8 en haut et le 4 en bas, sinon c'est contre-intuitif.
