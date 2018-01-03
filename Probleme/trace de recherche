@@ -1,25 +1,19 @@
-def boutonn1():
-    fenetre.quit
-    grille=4
+
+top=Tk()
+
+value = DoubleVar()
+scale = Scale(top, variable=value,from_=4 ,to=8)
+scale.pack()
+label = Label(top, text="Taille de la grille")
+label.pack()
 
 
-fenetre = Tk()
-bouton1=Button(fenetre, text ='4 cases',command=boutonn1)
-bouton1.pack()
-bouton2=Button(fenetre, text ='5 cases',command=fenetre.quit)
-grille=5
-bouton2.pack()
-bouton3=Button(fenetre, text ='6 cases',command=fenetre.quit)
-grille=6
-bouton3.pack()
-bouton4=Button(fenetre, text ='7 cases',command=fenetre.quit)
-grille=7
-bouton4.pack()
-bouton5=Button(fenetre, text ='8 cases',command=fenetre.quit)
-grille=8 #je sais que sa ne marche pas sa est que dans l'ordre sa met en 8 a la fin
-bouton5.pack()
-fenetre.mainloop()
-    
-    
-   
-  
+bouton=Button(top, text="Fermer", command=top.quit)
+bouton.pack()
+top.mainloop()
+grille=int(value.get())
+
+
+
+  CEST BON LA PUTAIN DE LA RACE DE SA MERE LA PUTE DE PYTHON
+  PLUS QUE A FAIRE MARCHER LE top.quit
