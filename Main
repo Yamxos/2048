@@ -1,7 +1,7 @@
 from tkinter import *
 from random import *
 
-grille=4
+grille=0;jeu=False
 choix=[]
 case=[]
 couleur=[]
@@ -13,7 +13,7 @@ couleur[32]='#FAAC58';couleur[64]='#FE9A2E';couleur[128]='#FF8000';couleur[256]=
 couleur[512]='#FF4000';couleur[1024]='#FF0000';couleur[2048]='#DF0101'
 
 
-def alea16(): #tirage d'un nombre aléatoire entre 0 et 15
+def tirage(): #tirage d'un nombre aléatoire entre 0 et 15
 	return choice(choix)
 
 def cheat1():
@@ -140,26 +140,44 @@ def clavier(event):
 	if(touche=="1"):cheat1()
 	if(touche=="2"):cheat2()
 			
-
-fenetre = Tk()
-
-for i in range(grille*grille):
-	choix.append(i)
-
-for ligne in range(grille): #création de la grille
-	for colonne in range(grille):
-		case.append(Button(fenetre, width=4, height=1, text="", borderwidth=10, font=('calibri', int(80*(4/grille))), bg=couleur[0], default=DISABLED))
-		case[ligne*grille+colonne].grid(row=ligne, column=colonne)
-		
-for i in range(2): #initialisation des cases de départ
-	while 1:
-		alea=alea16()
-		if(case[alea]["text"]==""):
-			case[alea]["text"]="2"
-			case[alea]["bg"]=couleur[2]
-			break
 	
-fenetre.focus_set()
-fenetre.bind("<Key>", clavier)	
+def commande():
+	menuwindow.destroy()
+	global jeu
+	jeu=True
+	
+menuwindow=Tk()
+menuwindow.configure(bg=couleur[0])
+menuwindow.geometry('250x200')
 
-fenetre.mainloop()
+value = DoubleVar()
+Label(menuwindow, text="Taille de la grille", font=('calibri', 20, 'underline'), bg=couleur[0]).pack()
+Scale(menuwindow, variable=value, from_=4, to=8, orient=HORIZONTAL, bg=couleur[0], font=('calibri', 20), length=200, relief=SOLID).pack(pady=16)
+Button(menuwindow, text="Jouer", font=('calibri', 20), bg=couleur[8], command=commande).pack()
+
+menuwindow.mainloop()
+grille=int(value.get())
+
+if(jeu==True):
+	gamewindow = Tk()
+		
+	for i in range(grille*grille):
+		choix.append(i)
+	
+	for ligne in range(grille): #création de la grille
+		for colonne in range(grille):
+			case.append(Button(gamewindow, width=4, height=1, text="", borderwidth=10, font=('calibri', int(80*(4/grille))), bg=couleur[0], default=DISABLED))
+			case[ligne*grille+colonne].grid(row=ligne, column=colonne)
+			
+	for i in range(2): #initialisation des cases de départ
+		while 1:
+			alea=tirage()
+			if(case[alea]["text"]==""):
+				case[alea]["text"]="2"
+				case[alea]["bg"]=couleur[2]
+				break
+		
+	gamewindow.focus_set()
+	gamewindow.bind("<Key>", clavier)	
+	
+	gamewindow.mainloop()
