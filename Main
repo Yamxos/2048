@@ -1,7 +1,9 @@
 from tkinter import *
 from random import *
+import datetime
 
-grille=0;jeu=False
+grille=0
+jeu=False
 choix=[]
 case=[]
 couleur=[]
@@ -16,6 +18,11 @@ couleur[512]='#FF4000';couleur[1024]='#FF0000';couleur[2048]='#DF0101'
 def tirage(): #tirage d'un nombre aléatoire entre 0 et 15
 	return choice(choix)
 
+def wait():
+	time = datetime.datetime.now()
+	while(datetime.datetime.now().second-time.second<0.1):
+		i=0
+		
 def cheat1():
 	for i in range(grille*grille):
 		if(case[i]["text"]!=""):
@@ -45,23 +52,36 @@ def casemorte(): #vérification des cases infusionnables
 	return nbcases
 
 def verif(): #vérification de l'état du jeu: gagné/perdu ou en cours
+	
+	if(grille%2==0):
+		c=int(grille+grille/2);a=c-2;b=c-1;d=c+1
+	else:c=int(grille+(grille+1)/2);a=c-3;b=c-2;d=c+1
+	
 	if(caseoccupee()==grille*grille and casemorte()==grille*grille):
-		case[grille]["text"]="GA";case[grille]["bg"]=couleur[3]
-		case[grille+1]["text"]="ME";case[grille+1]["bg"]=couleur[3]
-		case[grille+2]["text"]="OV";case[grille+2]["bg"]=couleur[3]
-		case[grille+3]["text"]="ER";case[grille+3]["bg"]=couleur[3]
+		for i in range(grille,grille+grille):
+			case[i]["bg"]=couleur[3]
+		case[a]["text"]="GA"
+		case[b]["text"]="ME"
+		case[c]["text"]="OV"
+		case[d]["text"]="ER"
+		global jeu
+		jeu=False
 	for i in range(grille*grille):
 		if(case[i]["text"]=="2048"):
-			case[grille]["text"]="WE";case[grille]["bg"]=couleur[1]
-			case[grille+1]["text"]="LL";case[grille+1]["bg"]=couleur[1]
-			case[grille+2]["text"]="DO";case[grille+2]["bg"]=couleur[1]
-			case[grille+3]["text"]="NE";case[grille+3]["bg"]=couleur[1]
+			for i in range(grille,grille+grille):
+				case[i]["bg"]=couleur[1]
+			case[a]["text"]="WE"
+			case[b]["text"]="LL"
+			case[c]["text"]="DO"
+			case[d]["text"]="NE"
+			global jeu
+			jeu=False
 
 def nouvellecase(): #Nouvellecase à emplacement aléatoire
 	if(caseoccupee()!=grille*grille):
 		spawn=random()
 		while 1:
-			alea=alea16()
+			alea=tirage()
 			if(case[alea]["text"]==""):
 				if(spawn<0.9):
 					case[alea]["text"]="2"
@@ -132,6 +152,8 @@ def tap(u): #tap(en direction de)
 	if(NoMove!=0):nouvellecase()
 
 def clavier(event):
+	if(jeu==False):
+		return
 	touche = event.keysym
 	if(touche=="Left" or touche=="q"):tap(-1)
 	if(touche=="Right" or touche=="d"):tap(1)
@@ -145,6 +167,7 @@ def commande():
 	menuwindow.destroy()
 	global jeu
 	jeu=True
+
 	
 menuwindow=Tk()
 menuwindow.configure(bg=couleur[0])
