@@ -7,3 +7,5 @@
 3.Sur ton idée, définition d'un objectif adaptatif à la taille de la grille(4-2048,5-4096,6-8192...), création de la variable WinNumber pour définir l'objectif à atteindre.
 
 4.Création d'une variable TotalCases=grille * grille  pour éviter au programme de le recalculer à chaque appel (#optimisation).
+
+5.Colorisation de tous les nombres >2048 dans la couleur de 2048 (rouge pétant).
