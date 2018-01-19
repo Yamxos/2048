@@ -1,0 +1,37 @@
+def cheatmode(touche,grille,case,sauvegarde,couleur,gamewindow,WinNumber,save,coloriser,tirage,caseoccupee):
+	print("CheatMode USED")
+	
+	def cheat1():
+		for i in range(grille*grille):
+			if(case[i]["text"]!=""):
+				case[i]["text"]=str(int(case[i]["text"])+1)
+				
+	def cheat2():
+		for i in range(grille*grille):
+			if(case[i]["text"]!=""):
+				case[i]["text"]=str(int(case[i]["text"])*2)
+				coloriser()
+				
+	def cheat3():
+		save()
+		if(caseoccupee()!=grille*grille):
+			while 1:
+				alea=tirage()
+				if(case[alea]["text"]==""):
+					case[alea]["text"]=str(WinNumber)
+					case[alea]["bg"]=couleur[2048]
+					break
+					
+	def cheat4():
+		if(len(sauvegarde)!=0):
+			for i in range(grille*grille):
+				case[i]["text"]=sauvegarde[-1][i]
+			del sauvegarde[-1]
+			coloriser()
+		
+				
+	if(touche=="1"):cheat1()
+	if(touche=="2"):cheat2()
+	if(touche=="3"):cheat3()
+	if(touche=="4"):cheat4()
+	
