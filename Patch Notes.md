@@ -2,6 +2,7 @@
 
 1.Intelligence artificielle résolvant le 2048, assigné à la touche "5" du pavé numérique.
 
+
 1.1 Notes de mise à jour 19/01/2018
 
 1.Création d'un retour en arrière jusqu'au début du jeu, considérer comme temporairement cheat, assigné à la touche "4" du pavé numérique.
