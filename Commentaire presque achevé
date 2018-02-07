@@ -1,0 +1,218 @@
+from tkinter import *  #On importe la bibliothèque de tkinter pour l'utiliser par la suite
+from random import *   #On importe la bibliothèque random pour utiliser des fonctions aléatoires par la suite
+
+programme=True    
+while(programme==True):
+	grille=0          #La variable grille est celle qui permet par la suite de définir la taille de la grille ...
+	programme=False   #Permet de ne pas avoir un programme qui ne se ferme jamais et qui se réouvre en continu
+	jeu=False         #Permet par la suite de ne pas lancer le jeu alors que l'utilisateur décide de fermer le menu et de ne pas lancer
+!!!!!!!!!!!!!!!!!!!!choix=[]
+	case=[]            #Liste qui contient toutes les cases du jeu
+	sauvegarde=[]      #Liste qui permet de sauvegarder les cases pour permettre au joueur de revenir a son coup précédent
+	couleur=[]         #Liste qui contient les différentes couleurs pour chaques valeurs
+	for i in range(2049):      #Etablissement de la palette de couleurs du jeu
+		couleur.append('')        #Ajoute les couleurs suivantes dans la liste qui conserve les couleurs
+	couleur[0]='#FBF5EF';couleur[1]='#01DF3A';couleur[3]='#8A0808'
+	couleur[2]='#F8ECE0';couleur[4]='#F6E3CE';couleur[8]='#F5D0A9';couleur[16]='#F7BE81'
+	couleur[32]='#FAAC58';couleur[64]='#FE9A2E';couleur[128]='#FF8000';couleur[256]='#FE642E'
+	couleur[512]='#FF4000';couleur[1024]='#FF0000';couleur[2048]='#DF0101'
+	#Les différentes couleurs de notre jeu correspondant aux nombres qui seront présents dans les cases
+	
+	def tirage(): #Fonction qui permet le tirage d'un nombre aléatoire entre 0 et notre case maximale
+		return choice(choix)      #Retourne un nombre aléatoire entre 0 et notre case maximale qui nous permet par exemple par la suite de faire apparaitre les nouvelles cases aléatoirement
+				
+!!!!!!!!!!!!!!!!def save(): #Fonction qui sauvegarde l'intégralité de la grille
+		TEMPORAIRE=[]     #Liste qui sauvegarde temporairement la grille
+		for i in range(TotalCases):       #Pour effectuer cette action sur toutes les cases de la grille
+			TEMPORAIRE.append(case[i]["text"])       #Stock toutes les cases de la  grille
+		if(len(sauvegarde)!=0 and TEMPORAIRE!=sauvegarde[-1]):
+			sauvegarde.append(TEMPORAIRE)
+		elif(len(sauvegarde)==0):
+			sauvegarde.append(TEMPORAIRE)
+				
+	def caseoccupee(): #Fonction qui vérifie toutes les cases occupées dans la grille pour par exemple permettre l'apparition des nouvelles cases dans les cases vides
+		nbcases=0         #Compte le nombre de cases occupées
+		for i in range(TotalCases):       #Pour effectuer cette action sur toutes les cases de la grille
+			if(case[i]["text"]!=""):         #Condition qui permet de calculer le nombre de cases occupés en regardant si les cases contiennent une information différentes de celle d'une case vide
+				nbcases=nbcases+1       #Incrémentation s'il ya des cases qui contiennent des informations
+		return nbcases        #Retourne le nombre de cases occupées
+	
+!!!!!!!!!!!!!!!!	def casemorte(): #Fonction qui vérifie les cases infusionnables par comparaison avec la case de droite et du bas quand toutes les cases sont occupées 
+        #La vérification se fait seulement a droite et en bas car de cette manière toutes les cases sont vérifiées et aucun calcul inutile n'est effectué
+		nbcases=0     #Compte le nombre de cases mortes
+		for i in range(TotalCases):       #Pour effectuer cette action sur toutes les cases de la grille
+			if((i+1)%grille!=0 and i<TotalCases-grille and case[i]["text"]!="" and case[i]["text"]!=case[i+1]["text"] and case[i]["text"]!=case[i+grille]["text"] #si la case a droite n'est pas égale a zéro et que la case i n'est pas celle a zéro ou dans la dernière ligne
+				or (i+1)%grille==0 and i!=TotalCases-1 and case[i]["text"]!="" and case[i]["text"]!=case[i+grille]["text"]
+                #Si i la case n'est pas la dernière de la liste , que la case est bien complété et que la case en dessous est différente
+				or i>=TotalCases-grille and i!=TotalCases-1 and case[i]["text"]!="" and case[i]["text"]!=case[i+1]["text"]
+				or i==TotalCases-1 and case[i]["text"]!=""):
+				nbcases=nbcases+1       #Incrémentation s'il ya des cases infusionnables
+		return nbcases        #Retourne le nombre de cases mortes
+	
+	def verif(): #Fonction qui permet la vérification de l'état du jeu: gagné/perdu ou en cours
+		global jeu
+		if(caseoccupee()==TotalCases and casemorte()==TotalCases): #Si toutes les cases sont occupées et infusionnables
+			for i in range(grille,grille+grille): #Affiche le message GA ME OV ER avec un fond rouge lorsque le joueur ne peut plus faire d'action
+				case[i]["bg"]=couleur[3]
+			case[a]["text"]="GA"
+			case[b]["text"]="ME"
+			case[c]["text"]="OV"
+			case[d]["text"]="ER"
+			jeu=False         #Arrete le jeu   
+		for i in range(TotalCases):
+			if(case[i]["text"]==str(WinNumber)): #Si une case est égale au nombre à atteindre
+				for i in range(grille,grille+grille): #Affiche le message WE LL DO NE avec un fond vert lorsque le joueur atteint le numéro qui correspond à celui a atteindre
+					case[i]["bg"]=couleur[1]
+				case[a]["text"]="WE"
+				case[b]["text"]="LL"
+				case[c]["text"]="DO"
+				case[d]["text"]="NE"
+				jeu=False       #Arrete le jeu
+		return jeu
+				
+	def coloriser(): #Fonction qui permet la colorisation de la grille après mouvement
+		for i in range(TotalCases):       #Colorie toutes les cases de la grille celon leur valeurs et les couleurs prédéfinis
+			if(case[i]["text"]!=""):
+				if(int(case[i]["text"])>2048):      #Si une case est supérieur a 2048(dans le cadre d'une grille supérieur a 16 cases) on la colorie avec la même couleur que pour le 2048
+					case[i]["bg"]=couleur[2048]        #Colorie l'arrière plan de la case 2048
+				else:case[i]["bg"]=couleur[int(case[i]["text"])]        #Colorie l'arrière plan  des cases celon leurs valeurs
+			else:case[i]["bg"]=couleur[0]        #Colorie les cases vides
+	
+	def nouvellecase(): #Fonction qui vient créer les nouvelles cases à un emplacement aléatoire
+		if(caseoccupee()!=TotalCases):  #Si le nombre de cases occupées est différent du nombre de cases totales
+!!!!!!!!!!!!!!!!spawn=random()       #prend une valeur en 0 et 1
+			while 1:
+				alea=tirage()       #Tire une case
+				if(case[alea]["text"]==""):     #Si la case est vide
+					if(spawn<0.9):     #si la valeur de spawn est inférieur a 0.9 on fait apparaitre un sinon on fait apparaitre un 4
+						case[alea]["text"]="2"   #On fait apparaitre un 2
+					else:
+						case[alea]["text"]="4"   #Ou on fait apparaitre un 4
+					break
+			
+	def casevierge(i): #Fonction qui permet de savoir qu'il y a une casevierge à cet emplacement
+		case[i]["text"]=""
+		
+	def fusecase(i): #Fonction qui fusionne deux cases (fusecase(en direction de))
+		case[i]["text"]=str(int(case[i]["text"])*2)
+		
+	def movecase(i,u): #Fonction qui déplace une case en direction du choix de l'utilisateur
+		case[i]["text"]=case[i+u]["text"]
+	
+	def tap(u): #Fonction qui permet de déplacer en direction du choix de l'utilisateurs
+!!!!!!!!!!save()
+		for i in range(TotalCases):
+			case[i]["default"]=DISABLED
+		NoMove=0;j=0
+		if(u==-1 or u==-grille):i=0
+		if(u==1 or u==grille):i=TotalCases-1
+		
+		for j in range(TotalCases):
+			deadend=0;boucle=0;skipped=1
+			#saut de case selon mouvement
+			if(u==-1 and i%grille==0):   #Si le mouvement demander par l'utilisateur est vers la gauche et que le reste de la dicision euclidienne de i par grille est 0 on passe a la case suivante
+				i=i+1
+			elif(u==1 and (i+1)%grille==0):  #Si le mouvement demander par l'utilisateur est vers la droite et que le reste de la division est 0 on va a la case précédente
+				i=i-1
+			elif(u==-grille and i<grille):   #Si le mouvement demander par l'utilisateur est vers le haut est que i est un nombre de la première ligne on passe à la case en dessous
+				i=i+grille
+			elif(u==grille and i>=TotalCases-grille):    #Si le mouvement demander par l'utilisateur est vers le bas est que est i correspond a une case de la dernierre ligne on passe a la case au dessus
+				i=i-grille
+			else:
+				skipped=0
+!!!!!!!!!!!#MOUVEMENT
+			while(deadend!=1 and case[i+u]["text"]=="" and case[i]["text"]!=""):
+				movecase(i+u,-u)
+				casevierge(i)
+				i=i+u
+				boucle=boucle+1
+				NoMove=NoMove+1
+				if(u==-1 and i%grille==0    #Si on veut aller vers la gauche et que la divison euclidienne =0
+				  or u==1 and (i+1)%grille==0   #Si on veut aller vers la droite et que la division euclidienne est égale à zero
+				  or u==-grille and i<grille    #Si on veut aller vers le haut mais que i est inférieur à grille soit la première ligne
+				  or u==grille and i>=TotalCases-grille):   #Si on veut aller vers le bas mais que i est supérieur au nombre max de cases moin la largeur de la grille
+					deadend=1  #Toutes ces solutions sont impossibles et sont donc des fins si nous sommes dans l'une de situation alors aucune action n'est effectué
+			#FUSION
+			if(deadend!=1 and case[i+u]["text"]==case[i]["text"] and case[i]["text"]!="" and case[i+u]["default"]==DISABLED): #Si nous ne sommes pas dans l'une des situations impossible et que les cases correspondent ou que la cases suivantes et vide
+				fusecase(i+u)       #Alors on peut fusionner les 2 cases
+				casevierge(i)       #Et la case d'avant le déplacement devient une case vierge
+!!!!!!!!!!!!!!case[i+u]["default"]=NORMAL
+				NoMove=NoMove+1     
+				
+			#remise de i à la normale
+			for y in range(boucle):i=i-u
+			#incrémentation selon mouvement
+			if((u==-1 or u==-grille and j>grille-1) and skipped!=1):i=i+1
+			if((u==1 or u==grille and j>grille-1) and skipped!=1):i=i-1
+			
+!!!!!!!!!!!!!if(NoMove!=0):nouvellecase();coloriser();verif()
+		else:return 0
+	
+	def clavier(event): #Fonction qui envoie une information a la fonction tap selon la touche qui est appuyé 
+         if(jeu==False):        #Si le jeu n'est pas activer alors on sort de cette fonction parce que les touches ne doivent pas pourvoir être utilisées
+              return
+!!!!!!!!!touche = event.keysym      #
+         if(touche=="Left" or touche=="q"):tap(-1)  #Si la touche appuyée est la GAUCHE ou la touche"Q" on envoie a tap la valeur -1 pour u ce qui correspond a un déplacement vers la gauche ex: déplacement de la case 14 à 13
+         elif(touche=="Right" or touche=="d"):tap(1)    #Si la touche appuyée est la DROITE ou la touche"D" on envoie a tap la valeur 1 pour u ce qui correspond a un déplacement vers la droite ex: déplacement de la case 13 à 14
+         elif(touche=="Up" or touche=="z"):tap(-grille)     #Si la touche appuyée est la touche HAUT ou "Z" on envoie a tap la valeur -grille soit dans le cas d'une grille de 16 cases -4 ce qui produit un déplacement vers le haut x: déplacement de la case 14 à 10
+         elif(touche=="Down" or touche=="s"):tap(grille)    #Si la touche appuyée est la touche BAS ou "S" on envoie a tap la valeur grille soit dans le cas d'une grille de 16 cases 4 ce qui produit un déplacement vers le bas x: déplacement de la case 10 à 14
+				
+		
+	def launchgame(): #Fonction qui lance le jeu en fermant le menu au préalable
+		menuwindow.destroy()      #On ferme la fenetre qui contient le menu
+!!!!!!!global jeu
+		jeu=True      #Et on défini le jeu comme actif
+		
+	def backtomenu(): #Fonction qui ferme le jeu et nous fait donc revenir au menu
+		gamewindow.destroy()      #On ferme la fenetre qui contient le jeu
+!!!!!!!global programme
+		programme=True        #Et on définit le programme comme actif
+	
+		
+	menuwindow=Tk() #La fenêtre TKINTER affiche le menu
+!!!menuwindow.wm_attributes('-topmost', 1)    
+	menuwindow.configure(bg=couleur[0])    #La couleur de fond du menu
+	menuwindow.geometry('250x200')     #La taille de la fenêtre du menu
+	
+	value = DoubleVar()
+	Label(menuwindow, text="Taille de la grille", font=('calibri', 20, 'underline'), bg=couleur[0]).pack()     #On écrit sur le menu Taille de grille en souligné avec une taille de police modifiée
+	Scale(menuwindow, variable=value, from_=4, to=8, orient=HORIZONTAL, bg=couleur[0], font=('calibri', 20), length=200, relief=SOLID).pack(pady=16)   #Création d'une barre graduée qui permet de choisir la taille de la grille et donc ainsi la difficultée du jeu
+	Button(menuwindow, text="Jouer", font=('calibri', 20), bg=couleur[8], command=launchgame).pack()   #Création d'un bouton qui lance le jeu et ferme le menu lors de son appui
+	
+	menuwindow.mainloop()      #Le programme précédent compose la fenêtre nommé menuwindow
+	grille=int(value.get())    #On récupère de la barre graduée la valeur choisi par l'utilisateur et on l'attribue a grille qui est une variable qui définie la taille de la grille (largeur , longueur)
+	
+	if(jeu==True): #Si le jeu est bien activé
+		
+		TotalCases=grille*grille      #le nombre total des cases est égal a la largeur par la longueur obtenue précédemment
+		WinNumber=2**(7+grille)       #On définit le numéro gagnant qui varie en fonction de la taille de la variable grille
+		if(grille%2==0): #position des mots GAME OVER et WELL DONE
+!!!!!!!!c=int(grille+grille/2);a=c-2;b=c-1;d=c+1
+		else:c=int(grille+(grille+1)/2);a=c-3;b=c-2;d=c+1
+		
+		gamewindow = Tk() #La fenêtre TKINTER affiche le jeu
+		gamewindow.title("2048")  #On nomme la fênetre 2048
+		menubar = Menu(gamewindow)    #On ajoute dans la barre de menu supérieure de la fenêtre game window 
+		menubar.add_command(label="Menu", command=backtomenu) #puis on ajoute un bouton qui permet de revenir au menu
+!!!!!!!gamewindow.config(menu=menubar)
+			
+		for i in range(TotalCases): # on ajoute pour toutes les cases leur "nombre" dans la liste choix
+			choix.append(i)
+		
+		for ligne in range(grille): #création de la grille
+			for colonne in range(grille):
+				case.append(Button(gamewindow, width=4, height=1, text="", borderwidth=10, font=('calibri', int(60*(4/grille))), bg=couleur[0], default=DISABLED))
+				case[ligne*grille+colonne].grid(row=ligne, column=colonne)
+				
+		for i in range(2): #initialisation des cases de départ
+			while 1:
+				alea=tirage()       #On tire une case aléatoirement
+				if(case[alea]["text"]==""):     #Si la case est vide
+					case[alea]["text"]="2"     #On lui donne la valeur 2
+					case[alea]["bg"]=couleur[2]    #Et on colorie la case avec la couleur attribué a la valeur 2
+					break #On interrompt la boucle
+			
+!!!!!!!gamewindow.focus_set()
+		gamewindow.bind("<Key>", clavier)	
+		
+		gamewindow.mainloop()
