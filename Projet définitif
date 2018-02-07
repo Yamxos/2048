@@ -1,0 +1,216 @@
+from tkinter import *
+from random import *
+
+programme=True
+while(programme==True):
+	grille=0
+	programme=False
+	jeu=False
+	choix=[]
+	case=[]
+	sauvegarde=[]
+	couleur=[]
+	for i in range(2049): #établissement de la palette de couleurs du jeu
+		couleur.append('')
+	couleur[0]='#FBF5EF';couleur[1]='#01DF3A';couleur[3]='#8A0808'
+	couleur[2]='#F8ECE0';couleur[4]='#F6E3CE';couleur[8]='#F5D0A9';couleur[16]='#F7BE81'
+	couleur[32]='#FAAC58';couleur[64]='#FE9A2E';couleur[128]='#FF8000';couleur[256]='#FE642E'
+	couleur[512]='#FF4000';couleur[1024]='#FF0000';couleur[2048]='#DF0101'
+	
+	
+	def tirage(): #tirage d'un nombre aléatoire entre 0 et 15
+		return choice(choix)
+				
+	def save(): #sauvegarde de la grille
+		TEMPORAIRE=[]
+		for i in range(TotalCases):
+			TEMPORAIRE.append(case[i]["text"])
+		if(len(sauvegarde)!=0 and TEMPORAIRE!=sauvegarde[-1]):
+			sauvegarde.append(TEMPORAIRE)
+		elif(len(sauvegarde)==0):
+			sauvegarde.append(TEMPORAIRE)
+				
+	def caseoccupee(): #vérification des cases occupées
+		nbcases=0
+		for i in range(TotalCases):
+			if(case[i]["text"]!=""):
+				nbcases=nbcases+1
+		return nbcases
+	
+	def casemorte(): #vérification des cases infusionnables par comparaison avec la case de droite et du bas
+		nbcases=0
+		for i in range(TotalCases):
+			if((i+1)%grille!=0 and i<TotalCases-grille and case[i]["text"]!="" and case[i]["text"]!=case[i+1]["text"] and case[i]["text"]!=case[i+grille]["text"]
+				or (i+1)%grille==0 and i!=TotalCases-1 and case[i]["text"]!="" and case[i]["text"]!=case[i+grille]["text"]
+				or i>=TotalCases-grille and i!=TotalCases-1 and case[i]["text"]!="" and case[i]["text"]!=case[i+1]["text"]
+				or i==TotalCases-1 and case[i]["text"]!=""):
+				nbcases=nbcases+1
+		return nbcases
+	
+	def verif(): #vérification de l'état du jeu: gagné/perdu ou en cours
+		global jeu
+		if(caseoccupee()==TotalCases and casemorte()==TotalCases):
+			for i in range(grille,grille+grille):
+				case[i]["bg"]=couleur[3]
+			case[a]["text"]="GA"
+			case[b]["text"]="ME"
+			case[c]["text"]="OV"
+			case[d]["text"]="ER"
+			#jeu=False
+		for i in range(TotalCases):
+			if(case[i]["text"]==str(WinNumber)):
+				for i in range(grille,grille+grille):
+					case[i]["bg"]=couleur[1]
+				case[a]["text"]="WE"
+				case[b]["text"]="LL"
+				case[c]["text"]="DO"
+				case[d]["text"]="NE"
+				jeu=False
+		return jeu
+				
+	def coloriser(): #Colorisation de la grille après mouvement
+		for i in range(TotalCases):
+			if(case[i]["text"]!=""):
+				if(int(case[i]["text"])>2048):
+					case[i]["bg"]=couleur[2048]
+				else:case[i]["bg"]=couleur[int(case[i]["text"])]
+			else:case[i]["bg"]=couleur[0]
+	
+	def nouvellecase(): #Nouvellecase à emplacement aléatoire
+		if(caseoccupee()!=TotalCases):
+			spawn=random()
+			while 1:
+				alea=tirage()
+				if(case[alea]["text"]==""):
+					if(spawn<0.9):
+						case[alea]["text"]="2"
+					else:
+						case[alea]["text"]="4"
+					break
+			
+	def casevierge(i): #casevierge(à cet emplacement)
+		case[i]["text"]=""
+		
+	def fusecase(i): #fusecase(en direction de)
+		case[i]["text"]=str(int(case[i]["text"])*2)
+		
+	def movecase(i,u): #movecase(en direction de, balance de i)
+		case[i]["text"]=case[i+u]["text"]
+	
+	def tap(u): #tap(en direction de)
+		save()
+		for i in range(TotalCases):
+			case[i]["default"]=DISABLED
+		NoMove=0;j=0
+		if(u==-1 or u==-grille):i=0
+		if(u==1 or u==grille):i=TotalCases-1
+		
+		for j in range(TotalCases):
+			deadend=0;boucle=0;skipped=1
+			#saut de case selon mouvement
+			if(u==-1 and i%grille==0):
+				i=i+1
+			elif(u==1 and (i+1)%grille==0):
+				i=i-1
+			elif(u==-grille and i<grille):
+				i=i+grille
+			elif(u==grille and i>=TotalCases-grille):
+				i=i-grille
+			else:
+				skipped=0
+			#MOUVEMENT
+			while(deadend!=1 and case[i+u]["text"]=="" and case[i]["text"]!=""):
+				movecase(i+u,-u)
+				casevierge(i)
+				i=i+u
+				boucle=boucle+1
+				NoMove=NoMove+1
+				if(u==-1 and i%grille==0
+				  or u==1 and (i+1)%grille==0
+				  or u==-grille and i<grille
+				  or u==grille and i>=TotalCases-grille):
+					deadend=1
+			#FUSION
+			if(deadend!=1 and case[i+u]["text"]==case[i]["text"] and case[i]["text"]!="" and case[i+u]["default"]==DISABLED):
+				fusecase(i+u)
+				casevierge(i)
+				case[i+u]["default"]=NORMAL
+				NoMove=NoMove+1
+				
+			#remise de i à la normale
+			for y in range(boucle):i=i-u
+			#incrémentation selon mouvement
+			if((u==-1 or u==-grille and j>grille-1) and skipped!=1):i=i+1
+			if((u==1 or u==grille and j>grille-1) and skipped!=1):i=i-1
+			
+		if(NoMove!=0):nouvellecase();coloriser();verif()
+		else:return 0
+	
+	def clavier(event): #Analyse de la touche pressée
+         if(jeu==False):
+              return
+         touche = event.keysym
+         if(touche=="Left" or touche=="q"):tap(-1)
+         elif(touche=="Right" or touche=="d"):tap(1)
+         elif(touche=="Up" or touche=="z"):tap(-grille)
+         elif(touche=="Down" or touche=="s"):tap(grille)
+				
+		
+	def launchgame(): #fermeture du menu, lancement du jeu
+		menuwindow.destroy()
+		global jeu
+		jeu=True
+		
+	def backtomenu(): #fermeture du jeu, ouverture du menu
+		gamewindow.destroy()
+		global programme
+		programme=True
+	
+		
+	menuwindow=Tk() #Menu au premier plan
+	menuwindow.wm_attributes('-topmost', 1)
+	menuwindow.configure(bg=couleur[0])
+	menuwindow.geometry('250x200')
+	
+	value = DoubleVar()
+	Label(menuwindow, text="Taille de la grille", font=('calibri', 20, 'underline'), bg=couleur[0]).pack()
+	Scale(menuwindow, variable=value, from_=4, to=8, orient=HORIZONTAL, bg=couleur[0], font=('calibri', 20), length=200, relief=SOLID).pack(pady=16)
+	Button(menuwindow, text="Jouer", font=('calibri', 20), bg=couleur[8], command=launchgame).pack()
+	
+	menuwindow.mainloop()
+	grille=int(value.get())
+	
+	if(jeu==True):
+		
+		TotalCases=grille*grille
+		WinNumber=2**(7+grille)
+		if(grille%2==0): #position des mots GAME OVER et WELL DONE
+			c=int(grille+grille/2);a=c-2;b=c-1;d=c+1
+		else:c=int(grille+(grille+1)/2);a=c-3;b=c-2;d=c+1
+		
+		gamewindow = Tk()
+		gamewindow.title("2048")
+		menubar = Menu(gamewindow)
+		menubar.add_command(label="Menu", command=backtomenu)
+		gamewindow.config(menu=menubar)
+			
+		for i in range(TotalCases):
+			choix.append(i)
+		
+		for ligne in range(grille): #création de la grille
+			for colonne in range(grille):
+				case.append(Button(gamewindow, width=4, height=1, text="", borderwidth=10, font=('calibri', int(60*(4/grille))), bg=couleur[0], default=DISABLED))
+				case[ligne*grille+colonne].grid(row=ligne, column=colonne)
+				
+		for i in range(2): #initialisation des cases de départ
+			while 1:
+				alea=tirage()
+				if(case[alea]["text"]==""):
+					case[alea]["text"]="2"
+					case[alea]["bg"]=couleur[2]
+					break
+			
+		gamewindow.focus_set()
+		gamewindow.bind("<Key>", clavier)	
+		
+		gamewindow.mainloop()
