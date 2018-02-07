@@ -1,0 +1,22 @@
+Menu-sélection de la taille de la grille
+
+Lancement de la grille:
+	bouton menu
+	construction de la grille (pb coordonnées)
+	initialisation des deux cases de début
+	
+Appel du mvt:
+	3 procédures:
+		casevierge()
+		fusecase()
+		movecase()
+	nouvelle case à chaque mvt
+	colorisation générale à la fin du mvt
+	vérification de l'état du jeu (gagné/perdu/en cours):
+		vérification du nombre de cases occupées:
+		si toutes occupées:
+			vérification du nombre de cases mortes:
+			si toutes mortes:
+				GAME OVER
+		sinon si 2048 alors:
+			WELL DONE !! Nombre à atteindre est fonction de la taille grille
